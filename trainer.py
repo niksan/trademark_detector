@@ -5,25 +5,32 @@ from tensorflow.keras.optimizers import RMSprop
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
 
-EPOCHS = 100
+EPOCHS = 80
 BASE_DIR = 'dataset'
+
+# tf.config.set_visible_devices([], 'GPU') # for force using CPU instead of GPU
+
+physical_devices = tf.config.list_physical_devices('GPU')
+if len(physical_devices) > 0:
+  tf.config.experimental.set_memory_growth(physical_devices[0], True)
+
 
 train_dir = os.path.join(BASE_DIR, 'train')
 validation_dir = os.path.join(BASE_DIR, 'validation')
 
 model = tf.keras.models.Sequential([
-    tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(150, 150, 3)),
-    tf.keras.layers.MaxPooling2D(2, 2),
-    tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
-    tf.keras.layers.MaxPooling2D(2,2),
-    tf.keras.layers.Conv2D(128, (3,3), activation='relu'),
-    tf.keras.layers.MaxPooling2D(2,2),
-    tf.keras.layers.Conv2D(128, (3,3), activation='relu'),
-    tf.keras.layers.MaxPooling2D(2,2),
-#    tf.keras.layers.Dropout(0.5),
-    tf.keras.layers.Flatten(),
-    tf.keras.layers.Dense(512, activation='relu'),
-    tf.keras.layers.Dense(1, activation='sigmoid')
+  tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(150, 150, 3)),
+  tf.keras.layers.MaxPooling2D(2, 2),
+  tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
+  tf.keras.layers.MaxPooling2D(2,2),
+  tf.keras.layers.Conv2D(128, (3,3), activation='relu'),
+  tf.keras.layers.MaxPooling2D(2,2),
+  tf.keras.layers.Conv2D(128, (3,3), activation='relu'),
+  tf.keras.layers.MaxPooling2D(2,2),
+#  tf.keras.layers.Dropout(0.5),
+  tf.keras.layers.Flatten(),
+  tf.keras.layers.Dense(512, activation='relu'),
+  tf.keras.layers.Dense(1, activation='sigmoid')
 ])
 
 model.compile(loss='binary_crossentropy',
