@@ -16,7 +16,9 @@ for group_folder in base_list:
       print('.', end = '')
       image_path = set_folder_dir + '/' + image_name
       image = Image.open(image_path)
-      image = image_conv_util.convert_to_palette(image)
-      image.convert('RGB').save(image_path)
+      layers = image.split()
+      if len(layers) >= 4: # if alpha is present
+        image = image_conv_util.convert_to_palette(image)
+        image.convert('RGB').save(image_path)
 
 print()

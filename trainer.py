@@ -1,19 +1,18 @@
 import os
-import zipfile
 import tensorflow as tf
 from tensorflow.keras.optimizers import RMSprop
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
 
-EPOCHS = 80
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # show only errors
+
+EPOCHS = 95
 BASE_DIR = 'dataset'
 
 # tf.config.set_visible_devices([], 'GPU') # for force using CPU instead of GPU
-
 physical_devices = tf.config.list_physical_devices('GPU')
 if len(physical_devices) > 0:
   tf.config.experimental.set_memory_growth(physical_devices[0], True)
-
 
 train_dir = os.path.join(BASE_DIR, 'train')
 validation_dir = os.path.join(BASE_DIR, 'validation')
@@ -27,7 +26,7 @@ model = tf.keras.models.Sequential([
   tf.keras.layers.MaxPooling2D(2,2),
   tf.keras.layers.Conv2D(128, (3,3), activation='relu'),
   tf.keras.layers.MaxPooling2D(2,2),
-#  tf.keras.layers.Dropout(0.5),
+  tf.keras.layers.Dropout(0.5),
   tf.keras.layers.Flatten(),
   tf.keras.layers.Dense(512, activation='relu'),
   tf.keras.layers.Dense(1, activation='sigmoid')
@@ -39,11 +38,11 @@ model.compile(loss='binary_crossentropy',
 
 train_datagen = ImageDataGenerator(
       rescale=1./255,
-      rotation_range=40,
+      rotation_range=2,
       width_shift_range=0.2,
       height_shift_range=0.2,
-      shear_range=0.2,
-      zoom_range=0.2,
+      shear_range=0.1,
+      zoom_range=0.3,
       fill_mode='nearest')
 
 test_datagen = ImageDataGenerator(rescale=1./255)
@@ -63,10 +62,10 @@ validation_generator = test_datagen.flow_from_directory(
 
 history = model.fit(
       train_generator,
-      steps_per_epoch=10,  # 100 images = batch_size * steps
+      steps_per_epoch=11,  # 110 images = batch_size * steps
       epochs=EPOCHS,
       validation_data=validation_generator,
-      validation_steps=3,  # 10 images = batch_size * steps
+      validation_steps=4,  # 20 images = batch_size * steps
       verbose=2)
 
 model.save('trained_model.h5')
